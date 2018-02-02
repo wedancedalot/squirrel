@@ -271,13 +271,6 @@ func (b SelectBuilder) RightJoinTable(tableName, fieldName string, sourceTable .
     return b.JoinClause(joinTable("RIGHT JOIN", tableName, fieldName, sourceTable...))
 }
 
-func joinTable(joinType, tableName, fieldName string, sourceTable...string) string {
-    if len(sourceTable) == 0 {
-        return fmt.Sprintf("%s %s USING (%s)", joinType, tableName, fieldName)
-    } else {
-        return fmt.Sprintf("%s %s ON %s = %s", joinType, tableName, Field(tableName, fieldName), Field(sourceTable[0], fieldName))
-    }
-}
 
 // Where adds an expression to the WHERE clause of the query.
 //
