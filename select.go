@@ -24,6 +24,7 @@ type selectData struct {
     Limit             string
     Offset            string
     Suffixes          exprs
+    ForUpdate         bool
 }
 
 func (d *selectData) Exec() (sql.Result, error) {
@@ -133,6 +134,10 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
     if len(d.Suffixes) > 0 {
         sql.WriteString(" ")
         args, _ = d.Suffixes.AppendToSql(sql, " ", args)
+    }
+
+    if d.ForUpdate {
+        sql.WriteString(" FOR UPDATE ")
     }
 
     sqlStr, err = d.PlaceholderFormat.ReplacePlaceholders(sql.String())
@@ -326,4 +331,9 @@ func (b SelectBuilder) Offset(offset uint64) SelectBuilder {
 // Suffix adds an expression to the end of the query
 func (b SelectBuilder) Suffix(sql string, args ...interface{}) SelectBuilder {
     return builder.Append(b, "Suffixes", Expr(sql, args...)).(SelectBuilder)
+}
+
+// Adds for update lock
+func (b SelectBuilder) ForUpdate(enable bool) SelectBuilder {
+    return builder.Set(b, "ForUpdate", enable).(SelectBuilder)
 }
