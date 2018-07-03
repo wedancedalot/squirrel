@@ -117,7 +117,21 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 			return
 		}
 	}
+	if len(d.Union) > 0 {
+		sql.WriteString(" UNION ")
+		args, err = appendToSql(d.Union, sql, " UNION ", args)
+		if err != nil {
+			return
+		}
+	}
 
+	if len(d.UnionAll) > 0 {
+		sql.WriteString(" UNION ALL ")
+		args, err = appendToSql(d.UnionAll, sql, " UNION ALL ", args)
+		if err != nil {
+			return
+		}
+	}
 	if len(d.OrderBys) > 0 {
 		sql.WriteString(" ORDER BY ")
 		sql.WriteString(strings.Join(d.OrderBys, ", "))
@@ -136,22 +150,6 @@ func (d *selectData) ToSql() (sqlStr string, args []interface{}, err error) {
 	if len(d.Suffixes) > 0 {
 		sql.WriteString(" ")
 		args, _ = d.Suffixes.AppendToSql(sql, " ", args)
-	}
-
-	if len(d.Union) > 0 {
-		sql.WriteString(" UNION ")
-		args, err = appendToSql(d.Union, sql, " UNION ", args)
-		if err != nil {
-			return
-		}
-	}
-
-	if len(d.UnionAll) > 0 {
-		sql.WriteString(" UNION ALL ")
-		args, err = appendToSql(d.UnionAll, sql, " UNION ALL ", args)
-		if err != nil {
-			return
-		}
 	}
 
 	if d.ForUpdate {
