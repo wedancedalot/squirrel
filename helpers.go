@@ -15,3 +15,7 @@ func joinTable(joinType, tableName, fieldName string, sourceTable...string) stri
         return fmt.Sprintf("%s %s ON %s = %s", joinType, tableName, Field(tableName, fieldName), Field(sourceTable[0], fieldName))
     }
 }
+
+func GroupConcat(tableName, fieldName string, as string) string {
+    return fmt.Sprintf("GROUP_CONCAT(%s.%s) as %s", tableName, fieldName, as)
+}
